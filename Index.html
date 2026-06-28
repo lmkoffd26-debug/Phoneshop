@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phone Shop BF — Créer un compte</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#16A05A;--green2:#0d7a42;--green-soft:#E6F6EE;
+  --amber:#F59E0B;--amber-soft:#FFFBEB;
+  --red:#DC2626;--red-soft:#FEF2F2;
+  --ink:#0A0A0A;--ink2:#1C1C1C;--ink3:#3D3D3D;
+  --muted:#6B7280;--border:#E5E7EB;--surface:#F9FAFB;
+  --white:#FFFFFF;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--surface);min-height:100vh;}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+
+/* ── LOGO SVG ── */
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+
+/* ── PAGE 1 : CHOIX DU RÔLE ── */
+.landing-nav{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--white);border-bottom:1px solid var(--border);}
+.hero-landing{background:var(--ink2);min-height:52vw;max-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 20px;text-align:center;position:relative;overflow:hidden;}
+.hero-landing::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(22,160,90,.25) 0%,transparent 65%);}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:5px 14px;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:14px;letter-spacing:.3px;position:relative;}
+.hero-landing h1{font-size:1.85rem;font-weight:800;color:var(--white);line-height:1.15;position:relative;}
+.hero-landing h1 em{color:var(--amber);font-style:normal;}
+.hero-landing p{font-size:.87rem;color:rgba(255,255,255,.55);margin-top:8px;max-width:280px;position:relative;}
+
+.role-section{padding:24px 18px;}
+.role-section h2{font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--ink3);}
+.role-cards{display:flex;flex-direction:column;gap:12px;}
+.role-card{background:var(--white);border:2px solid var(--border);border-radius:var(--radius);padding:20px 18px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:16px;}
+.role-card:hover{border-color:var(--green);transform:translateY(-1px);box-shadow:0 4px 20px rgba(22,160,90,.1);}
+.role-card.buyer-card:hover{border-color:var(--green);}
+.role-card.seller-card:hover{border-color:var(--amber);}
+.role-card-icon{width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;}
+.ic-buyer{background:var(--green-soft);}
+.ic-seller{background:var(--amber-soft);}
+.role-card-body{flex:1;}
+.role-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;}
+.role-card-sub{font-size:.8rem;color:var(--muted);margin-top:3px;line-height:1.5;}
+.role-card-arr{color:var(--muted);font-size:1.1rem;}
+.login-row{text-align:center;margin-top:24px;font-size:.85rem;color:var(--muted);}
+.login-row a{color:var(--green);font-weight:600;text-decoration:none;cursor:pointer;}
+
+/* ── PAGE 2A : INSCRIPTION ACHETEUR ── */
+/* ── PAGE 2B : INSCRIPTION VENDEUR ── */
+.auth-header{background:var(--white);padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.back-btn{background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--muted);padding:4px;display:flex;align-items:center;}
+.auth-header-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;flex:1;text-align:center;}
+.step-indicator{display:flex;align-items:center;gap:6px;}
+.step-dot{width:22px;height:22px;border-radius:50%;font-size:.68rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.sd-active{background:var(--green);color:var(--white);}
+.sd-done{background:var(--green-soft);color:var(--green);}
+.sd-inactive{background:var(--border);color:var(--muted);}
+.step-line{width:20px;height:2px;background:var(--border);}
+.step-line.done{background:var(--green);}
+
+.form-wrap{padding:20px 18px;}
+.form-section{margin-bottom:22px;}
+.form-section-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:.82rem;font-weight:600;color:var(--ink3);margin-bottom:5px;}
+.field input,.field select,.field textarea{
+  width:100%;padding:12px 14px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:.92rem;outline:none;transition:border .2s;
+  background:var(--white);color:var(--ink);font-family:'DM Sans',sans-serif;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);}
+.field textarea{resize:none;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field-hint{font-size:.74rem;color:var(--muted);margin-top:4px;}
+
+/* ── POLITIQUE DE CONFIANCE ── */
+.trust-block{background:var(--white);border-radius:var(--radius);border:1.5px solid var(--border);overflow:hidden;margin-bottom:16px;}
+.trust-header{background:var(--ink2);padding:16px 18px;display:flex;align-items:center;gap:10px;}
+.trust-header-icon{font-size:1.4rem;}
+.trust-header-text{color:var(--white);}
+.trust-header-text h3{font-family:'Syne',sans-serif;font-size:.97rem;font-weight:700;}
+.trust-header-text p{font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px;}
+.trust-body{padding:18px;max-height:260px;overflow-y:auto;}
+.trust-article{margin-bottom:16px;}
+.trust-article h4{font-family:'Syne',sans-serif;font-size:.83rem;font-weight:700;color:var(--ink);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.trust-article p{font-size:.8rem;color:var(--ink3);line-height:1.7;}
+.trust-article ul{padding-left:16px;margin-top:6px;}
+.trust-article ul li{font-size:.78rem;color:var(--ink3);line-height:1.8;}
+.trust-warning{background:var(--red-soft);border-top:1px solid #FCA5A5;padding:14px 18px;}
+.trust-warning p{font-size:.78rem;color:var(--red);line-height:1.6;font-weight:500;}
+.trust-footer{padding:14px 18px;border-top:1px solid var(--border);background:var(--surface);}
+.trust-footer p{font-size:.73rem;color:var(--muted);line-height:1.5;}
+
+.checkbox-row{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--white);border-radius:10px;border:1.5px solid var(--border);cursor:pointer;transition:border .2s;margin-bottom:10px;}
+.checkbox-row.checked{border-color:var(--green);background:var(--green-soft);}
+.checkbox-row input[type=checkbox]{width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--green);cursor:pointer;}
+.checkbox-row p{font-size:.8rem;color:var(--ink3);line-height:1.6;}
+.checkbox-row p b{color:var(--ink);}
+
+/* ── PHOTO UPLOAD ── */
+.photo-zone{border:2px dashed var(--border);border-radius:12px;padding:22px 16px;text-align:center;cursor:pointer;position:relative;transition:all .2s;}
+.photo-zone:hover{border-color:var(--green);background:var(--green-soft);}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.photo-zone-icon{font-size:2rem;margin-bottom:8px;}
+.photo-zone p{font-size:.82rem;color:var(--muted);}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.photo-thumb{aspect-ratio:1;border-radius:8px;overflow:hidden;position:relative;background:var(--surface);}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;}
+.photo-thumb-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* ── BTN ── */
+.btn{width:100%;padding:14px;border-radius:11px;border:none;cursor:pointer;font-weight:600;font-size:.95rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.btn-green{background:var(--green);color:var(--white);}
+.btn-green:hover{background:var(--green2);}
+.btn-amber{background:var(--amber);color:var(--ink);}
+.btn-amber:hover{background:#D97706;}
+.btn-ghost{background:var(--white);color:var(--ink);border:1.5px solid var(--border);}
+.btn-ghost:hover{background:var(--surface);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-row{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+
+/* ── PAGE 3 : SUCCÈS ACHETEUR ── */
+.success-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0;}
+.success-top{background:var(--green);width:100%;padding:40px 20px 36px;text-align:center;color:var(--white);}
+.success-checkmark{width:72px;height:72px;background:rgba(255,255,255,.15);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;border:3px solid rgba(255,255,255,.3);}
+.success-top h2{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;}
+.success-top p{font-size:.87rem;opacity:.8;margin-top:6px;max-width:260px;margin-left:auto;margin-right:auto;}
+.success-body{padding:24px 18px;width:100%;}
+.info-card{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:14px;}
+.info-card-header{padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.info-card-header span{font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--ink3);}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);font-size:.84rem;}
+.info-row:last-child{border:none;}
+.info-key{color:var(--muted);}
+.info-val{font-weight:600;color:var(--ink);}
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;}
+.pill-green{background:var(--green-soft);color:var(--green);}
+.pill-amber{background:var(--amber-soft);color:#B45309;}
+.next-steps{background:var(--white);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:14px;}
+.next-steps h3{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;margin-bottom:14px;}
+.ns-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.ns-num{width:26px;height:26px;background:var(--green);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0;margin-top:1px;}
+.ns-text{flex:1;font-size:.83rem;line-height:1.6;color:var(--ink3);}
+
+/* ── PAGE 3B : SUCCÈS VENDEUR (EN ATTENTE) ── */
+.pending-top{background:var(--ink2);width:100%;padding:40px 20px 36px;text-align:center;color:var(--white);}
+.pending-icon{width:72px;height:72px;background:rgba(245,158,11,.15);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;border:3px solid rgba(245,158,11,.3);}
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:14px;position:relative;}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:13px;top:30px;bottom:-4px;width:2px;background:var(--border);}
+.tl-item.done::after{background:var(--green);}
+.tl-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;flex-shrink:0;background:var(--white);}
+.tl-item.done .tl-dot{background:var(--green);border-color:var(--green);color:var(--white);}
+.tl-item.current .tl-dot{background:var(--amber);border-color:var(--amber);color:var(--white);}
+.tl-body{padding-bottom:18px;flex:1;}
+.tl-title{font-weight:700;font-size:.88rem;}
+.tl-sub{font-size:.77rem;color:var(--muted);margin-top:2px;line-height:1.5;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--white);padding:10px 20px;border-radius:20px;font-size:.84rem;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── SELLER STEP2 ── */
+.cond-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.cond-btn{border:1.5px solid var(--border);border-radius:9px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s;}
+.cond-btn.sel{border-color:var(--green);background:var(--green-soft);}
+.cond-btn span{font-size:1.2rem;display:block;margin-bottom:3px;}
+.cond-btn p{font-size:.7rem;font-weight:600;color:var(--muted);}
+.cond-btn.sel p{color:var(--green);}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 1 — LANDING / CHOIX DU RÔLE
+════════════════════════════════════════ -->
+<div id="sc-landing" class="screen active">
+  <!-- Nav -->
+  <div class="landing-nav">
+    <div class="logo-wrap">
+      <!-- Logo SVG Phone Shop BF -->
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="9" fill="#16A05A"/>
+        <rect x="11" y="6" width="14" height="22" rx="3" fill="white" opacity="0.15"/>
+        <rect x="12" y="7" width="12" height="20" rx="2.5" fill="white"/>
+        <rect x="14" y="9" width="8" height="12" rx="1.5" fill="#16A05A"/>
+        <circle cx="18" cy="24" r="1.5" fill="#16A05A"/>
+        <rect x="16.5" y="7.5" width="3" height="0.8" rx="0.4" fill="#E5E7EB"/>
+        <!-- BF flag accent -->
+        <rect x="25" y="4" width="7" height="3.5" rx="1" fill="#EF4444"/>
+        <rect x="25" y="7.5" width="7" height="3.5" rx="1" fill="#16A05A"/>
+        <circle cx="28.5" cy="8" r="1.2" fill="#F59E0B"/>
+      </svg>
+      <div class="logo-text">Phone<span>Shop</span> BF</div>
+    </div>
+    <a onclick="goTo('sc-login')" style="font-size:.83rem;color:var(--green);font-weight:600;cursor:pointer;text-decoration:none;">Se connecter</a>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero-landing">
+    <div class="hero-badge">🇧🇫 Burkina Faso · Plateforme certifiée</div>
+    <h1>La boutique<br>téléphone <em>de confiance</em></h1>
+    <p>Achetez et vendez des appareils électroniques en toute sécurité.</p>
+  </div>
+
+  <!-- Choix rôle -->
+  <div class="role-section">
+    <h2>Créer un compte</h2>
+    <div class="role-cards">
+      <div class="role-card buyer-card" onclick="goTo('sc-register-buyer')">
+        <div class="role-card-icon ic-buyer">🛒</div>
+        <div class="role-card-body">
+          <div class="role-card-title">Je suis acheteur</div>
+          <div class="role-card-sub">Achetez des téléphones et accessoires auprès de vendeurs vérifiés.</div>
+        </div>
+        <div class="role-card-arr">›</div>
+      </div>
+      <div class="role-card seller-card" onclick="goTo('sc-register-seller-1')">
+        <div class="role-card-icon ic-seller">🏪</div>
+        <div class="role-card-body">
+          <div class="role-card-title">Je suis vendeur</div>
+          <div class="role-card-sub">Ouvrez votre boutique et touchez des clients dans tout le Burkina.</div>
+        </div>
+        <div class="role-card-arr">›</div>
+      </div>
+    </div>
+    <div class="login-row">
+      Déjà inscrit ? <a onclick="goTo('sc-login')">Se connecter →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 2A — INSCRIPTION ACHETEUR
+════════════════════════════════════════ -->
+<div id="sc-register-buyer" class="screen">
+  <div class="auth-header">
+    <button class="back-btn" onclick="goTo('sc-landing')">←</button>
+    <div class="auth-header-title">Compte acheteur</div>
+    <div class="step-indicator">
+      <div class="step-dot sd-active">1</div>
+      <div class="step-line"></div>
+      <div class="step-dot sd-inactive">2</div>
+    </div>
+  </div>
+
+  <div class="form-wrap">
+    <div class="form-section">
+      <div class="form-section-label">👤 Informations personnelles</div>
+      <div class="field-row">
+        <div class="field"><label>Prénom *</label><input type="text" id="b-first" placeholder="Armel"></div>
+        <div class="field"><label>Nom *</label><input type="text" id="b-last" placeholder="Toni"></div>
+      </div>
+      <div class="field"><label>Téléphone WhatsApp *</label><input type="tel" id="b-phone" placeholder="+226 70 00 00 00"></div>
+      <div class="field"><label>Email</label><input type="email" id="b-email" placeholder="vous@email.com"></div>
+      <div class="field">
+        <label>Ville *</label>
+        <select id="b-city">
+          <option value="">-- Sélectionner --</option>
+          <option>Ouagadougou</option><option>Bobo-Dioulasso</option>
+          <option>Koudougou</option><option>Banfora</option>
+          <option>Ouahigouya</option><option>Kaya</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="field"><label>Mot de passe *</label><input type="password" id="b-pwd" placeholder="Minimum 6 caractères"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="goTo('sc-register-buyer-2')">Étape suivante →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 2A-2 — POLITIQUE + VALIDATION ACHETEUR
+════════════════════════════════════════ -->
+<div id="sc-register-buyer-2" class="screen">
+  <div class="auth-header">
+    <button class="back-btn" onclick="goTo('sc-register-buyer')">←</button>
+    <div class="auth-header-title">Politique de confiance</div>
+    <div class="step-indicator">
+      <div class="step-dot sd-done">✓</div>
+      <div class="step-line done"></div>
+      <div class="step-dot sd-active">2</div>
+    </div>
+  </div>
+
+  <div class="form-wrap">
+
+    <!-- BLOC POLITIQUE -->
+    <div class="trust-block">
+      <div class="trust-header">
+        <div class="trust-header-icon">⚖️</div>
+        <div class="trust-header-text">
+          <h3>Politique de protection des acheteurs</h3>
+          <p>Phone Shop BF — Document contractuel</p>
+        </div>
+      </div>
+      <div class="trust-body">
+
+        <div class="trust-article">
+          <h4>📜 Article 1 — Objet</h4>
+          <p>La présente politique régit les relations entre les acheteurs et les vendeurs sur la plateforme <strong>Phone Shop BF</strong>. En créant un compte, vous acceptez l'intégralité des conditions ci-dessous, lesquelles ont valeur contractuelle.</p>
+        </div>
+
+        <div class="trust-article">
+          <h4>🛡️ Article 2 — Engagement de livraison garanti</h4>
+          <p>Tout vendeur ayant reçu un paiement confirmé par Phone Shop BF <strong>s'engage impérativement à livrer</strong> la commande dans les délais convenus. En cas de manquement :</p>
+          <ul>
+            <li>L'intégralité du montant payé est remboursé à l'acheteur sous 48h.</li>
+            <li>Le vendeur s'expose à des <strong>frais de dédommagement</strong> fixés à 15% du montant de la commande.</li>
+            <li>Phone Shop BF se réserve le droit de suspendre définitivement le compte du vendeur.</li>
+          </ul>
+        </div>
+
+        <div class="trust-article">
+          <h4>⚠️ Article 3 — Responsabilité du vendeur</h4>
+          <p>Tout vendeur qui perçoit un paiement sans livrer la marchandise s'expose à :</p>
+          <ul>
+            <li>Des <strong>poursuites judiciaires</strong> devant les juridictions compétentes du Burkina Faso, conformément à la loi sur les transactions commerciales électroniques.</li>
+            <li>Le remboursement forcé du montant initial augmenté des <strong>frais de dédommagement</strong>.</li>
+            <li>Une <strong>signalisation auprès des autorités compétentes</strong> (ASCE-LC, tribunaux de commerce).</li>
+          </ul>
+        </div>
+
+        <div class="trust-article">
+          <h4>🔒 Article 4 — Séquestre des fonds (Escrow)</h4>
+          <p>Phone Shop BF agit en tant qu'intermédiaire de confiance. Les fonds de l'acheteur sont <strong>conservés sur le compte Phone Shop BF</strong> et ne sont versés au vendeur qu'après confirmation de réception du colis par l'acheteur ou expiration du délai de réclamation de 72h.</p>
+        </div>
+
+        <div class="trust-article">
+          <h4>📦 Article 5 — Délai de réclamation</h4>
+          <p>L'acheteur dispose de <strong>72 heures</strong> après la livraison pour signaler tout problème (produit non conforme, endommagé, manquant). Passé ce délai, la transaction est considérée comme complète et les fonds sont versés au vendeur.</p>
+        </div>
+
+        <div class="trust-article">
+          <h4>🤝 Article 6 — Bonne foi des acheteurs</h4>
+          <p>L'acheteur s'engage à :</p>
+          <ul>
+            <li>Fournir des informations exactes lors de l'inscription.</li>
+            <li>Ne pas effectuer de fausses réclamations.</li>
+            <li>Être disponible pour la livraison aux coordonnées fournies.</li>
+          </ul>
+          <p style="margin-top:8px;">Tout abus avéré (réclamations frauduleuses répétées) entraîne la suspension du compte acheteur.</p>
+        </div>
+
+        <div class="trust-article">
+          <h4>📞 Article 7 — Contact & litiges</h4>
+          <p>En cas de litige, contactez Phone Shop BF via WhatsApp dans un délai de 72h après la date de livraison prévue. Nous nous engageons à traiter chaque réclamation sous <strong>24 heures ouvrables</strong>.</p>
+        </div>
+      </div>
+
+      <div class="trust-warning">
+        <p>⚠️ <strong>Important :</strong> Tout vendeur recevant un paiement sans livrer la marchandise sera tenu responsable civilement et pénalement. Le montant du dédommagement s'élève au <strong>remboursement intégral + 15% de frais</strong>, avec possibilité de poursuites judiciaires devant les tribunaux compétents du Burkina Faso.</p>
+      </div>
+      <div class="trust-footer">
+        <p>Document établi conformément à la législation burkinabè sur le commerce électronique. Version 1.0 — Phone Shop BF.</p>
+      </div>
+    </div>
+
+    <!-- CASES À COCHER -->
+    <label class="checkbox-row" id="chk1-row" onclick="toggleChk('chk1','chk1-row')">
+      <input type="checkbox" id="chk1">
+      <p>J'ai lu et j'accepte la <b>Politique de protection des acheteurs</b> de Phone Shop BF dans son intégralité.</p>
+    </label>
+
+    <label class="checkbox-row" id="chk2-row" onclick="toggleChk('chk2','chk2-row')">
+      <input type="checkbox" id="chk2">
+      <p>Je comprends que si j'envoie de l'argent pour une commande, <b>je dois recevoir mon colis</b>. En cas de non-livraison, Phone Shop BF me garantit le remboursement intégral et des poursuites peuvent être engagées contre le vendeur défaillant.</p>
+    </label>
+
+    <label class="checkbox-row" id="chk3-row" onclick="toggleChk('chk3','chk3-row')">
+      <input type="checkbox" id="chk3">
+      <p>J'atteste que les informations que j'ai fournies sont <b>exactes et véridiques</b>, et je m'engage à ne pas effectuer de fausses réclamations.</p>
+    </label>
+
+    <div class="btn-row" style="margin-top:6px;">
+      <button class="btn btn-green" id="submit-buyer-btn" onclick="registerBuyer()" disabled>
+        ✅ Créer mon compte acheteur
+      </button>
+      <button class="btn btn-ghost" onclick="goTo('sc-register-buyer')">← Retour</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 3A — SUCCÈS ACHETEUR
+════════════════════════════════════════ -->
+<div id="sc-success-buyer" class="screen">
+  <div class="success-wrap">
+    <div class="success-top">
+      <div class="success-checkmark">✅</div>
+      <h2>Bienvenue sur Phone Shop BF !</h2>
+      <p>Votre compte acheteur est créé et prêt à l'emploi.</p>
+    </div>
+    <div class="success-body">
+      <div class="info-card">
+        <div class="info-card-header">
+          <svg width="14" height="14" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="9" fill="#16A05A"/><rect x="12" y="7" width="12" height="20" rx="2.5" fill="white"/><rect x="14" y="9" width="8" height="12" rx="1.5" fill="#16A05A"/><circle cx="18" cy="24" r="1.5" fill="#16A05A"/></svg>
+          <span>Informations du compte</span>
+        </div>
+        <div class="info-row"><span class="info-key">Nom</span><span class="info-val" id="suc-name">—</span></div>
+        <div class="info-row"><span class="info-key">Téléphone</span><span class="info-val" id="suc-phone">—</span></div>
+        <div class="info-row"><span class="info-key">Ville</span><span class="info-val" id="suc-city">—</span></div>
+        <div class="info-row"><span class="info-key">Type de compte</span><span class="info-val"><span class="pill pill-green">Acheteur vérifié</span></span></div>
+        <div class="info-row"><span class="info-key">Politique acceptée</span><span class="info-val"><span class="pill pill-green">✓ Oui</span></span></div>
+      </div>
+
+      <div class="next-steps">
+        <h3>🚀 Que faire maintenant ?</h3>
+        <div class="ns-item">
+          <div class="ns-num">1</div>
+          <div class="ns-text"><b>Explorez les produits</b> — Parcourez des centaines de téléphones et accessoires vérifiés.</div>
+        </div>
+        <div class="ns-item">
+          <div class="ns-num">2</div>
+          <div class="ns-text"><b>Commandez en toute sécurité</b> — Vos fonds sont protégés jusqu'à la réception de votre colis.</div>
+        </div>
+        <div class="ns-item">
+          <div class="ns-num">3</div>
+          <div class="ns-text"><b>Payez par Orange Money, Moov Money ou Wave</b> — Simple, rapide, sécurisé.</div>
+        </div>
+        <div class="ns-item">
+          <div class="ns-num">4</div>
+          <div class="ns-text"><b>Réclamez sous 72h</b> si votre colis n'est pas conforme — nous vous remboursons.</div>
+        </div>
+      </div>
+
+      <div style="background:var(--green-soft);border-radius:var(--radius);padding:16px;margin-bottom:16px;border:1px solid #86EFAC;">
+        <p style="font-size:.82rem;color:var(--green2);line-height:1.7;">🔒 <b>Votre argent est protégé.</b> Phone Shop BF conserve vos fonds jusqu'à la livraison confirmée. En cas de problème, nous vous remboursons intégralement + 15% de dédommagement à la charge du vendeur.</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="goToApp()">🛒 Accéder à la marketplace →</button>
+        <button class="btn btn-ghost" onclick="shareOnWA()">💬 Inviter un ami sur WhatsApp</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 2B-1 — INSCRIPTION VENDEUR
+════════════════════════════════════════ -->
+<div id="sc-register-seller-1" class="screen">
+  <div class="auth-header">
+    <button class="back-btn" onclick="goTo('sc-landing')">←</button>
+    <div class="auth-header-title">Ouvrir ma boutique</div>
+    <div class="step-indicator">
+      <div class="step-dot sd-active">1</div>
+      <div class="step-line"></div>
+      <div class="step-dot sd-inactive">2</div>
+      <div class="step-line"></div>
+      <div class="step-dot sd-inactive">3</div>
+    </div>
+  </div>
+  <div class="form-wrap">
+    <div class="form-section">
+      <div class="form-section-label">👤 Identité du propriétaire</div>
+      <div class="field-row">
+        <div class="field"><label>Prénom *</label><input type="text" id="s-first" placeholder="Moussa"></div>
+        <div class="field"><label>Nom *</label><input type="text" id="s-last" placeholder="Ouédraogo"></div>
+      </div>
+      <div class="field"><label>Téléphone WhatsApp *</label><input type="tel" id="s-phone" placeholder="+226 70 00 00 00"></div>
+      <div class="field"><label>Email</label><input type="email" id="s-email" placeholder="vous@email.com"></div>
+      <div class="field"><label>Numéro CNI / IFU (optionnel mais recommandé)</label><input type="text" id="s-cni" placeholder="Pour le badge Vendeur Vérifié"></div>
+      <div class="field"><p class="field-hint">⚡ Les vendeurs avec CNI/IFU obtiennent le badge Vérifié et gagnent plus la confiance des acheteurs.</p></div>
+      <div class="field"><label>Mot de passe *</label><input type="password" id="s-pwd" placeholder="Minimum 6 caractères"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-amber" onclick="goTo('sc-register-seller-2')">Étape suivante →</button>
+      <button class="btn btn-ghost" onclick="goTo('sc-landing')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 2B-2 — INFO BOUTIQUE
+════════════════════════════════════════ -->
+<div id="sc-register-seller-2" class="screen">
+  <div class="auth-header">
+    <button class="back-btn" onclick="goTo('sc-register-seller-1')">←</button>
+    <div class="auth-header-title">Ma boutique</div>
+    <div class="step-indicator">
+      <div class="step-dot sd-done">✓</div>
+      <div class="step-line done"></div>
+      <div class="step-dot sd-active">2</div>
+      <div class="step-line"></div>
+      <div class="step-dot sd-inactive">3</div>
+    </div>
+  </div>
+  <div class="form-wrap">
+    <div class="form-section">
+      <div class="form-section-label">🏪 Informations boutique</div>
+      <div class="field"><label>Nom de la boutique *</label><input type="text" id="sh-name" placeholder="Ex: TechZone Ouaga"></div>
+      <div class="field">
+        <label>Catégorie principale *</label>
+        <select id="sh-cat">
+          <option value="">-- Sélectionner --</option>
+          <option>Téléphones neufs</option>
+          <option>Téléphones reconditionnés</option>
+          <option>Accessoires</option>
+          <option>Tablettes</option>
+          <option>Tout à la fois</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ville *</label>
+        <select id="sh-city">
+          <option value="">-- Sélectionner --</option>
+          <option>Ouagadougou</option><option>Bobo-Dioulasso</option>
+          <option>Koudougou</option><option>Banfora</option>
+          <option>Ouahigouya</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="field"><label>Adresse / Quartier</label><input type="text" id="sh-addr" placeholder="Ex: Secteur 15, Av. Kwamé Nkrumah"></div>
+      <div class="field"><label>Description de la boutique</label><textarea id="sh-desc" rows="3" placeholder="Ce que vous vendez, votre expérience, vos garanties…"></textarea></div>
+      <div class="field">
+        <label>Logo / Photo de boutique</label>
+        <div class="photo-zone" id="logo-zone">
+          <input type="file" accept="image/*" onchange="previewLogo(this)">
+          <div class="photo-zone-icon">🏪</div>
+          <p>Appuyer pour ajouter une photo</p>
+        </div>
+        <div id="logo-preview" style="display:none;margin-top:10px;">
+          <img id="logo-img" style="width:70px;height:70px;border-radius:10px;object-fit:cover;">
+          <p class="field-hint" style="margin-top:4px;">✅ Logo chargé</p>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-amber" onclick="goTo('sc-register-seller-3')">Étape suivante →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 2B-3 — ENGAGEMENT VENDEUR
+════════════════════════════════════════ -->
+<div id="sc-register-seller-3" class="screen">
+  <div class="auth-header">
+    <button class="back-btn" onclick="goTo('sc-register-seller-2')">←</button>
+    <div class="auth-header-title">Charte du vendeur</div>
+    <div class="step-indicator">
+      <div class="step-dot sd-done">✓</div>
+      <div class="step-line done"></div>
+      <div class="step-dot sd-done">✓</div>
+      <div class="step-line done"></div>
+      <div class="step-dot sd-active">3</div>
+    </div>
+  </div>
+  <div class="form-wrap">
+
+    <div class="trust-block">
+      <div class="trust-header" style="background:var(--ink);">
+        <div class="trust-header-icon">📋</div>
+        <div class="trust-header-text">
+          <h3>Charte des vendeurs Phone Shop BF</h3>
+          <p>Conditions d'utilisation et engagements</p>
+        </div>
+      </div>
+      <div class="trust-body">
+        <div class="trust-article">
+          <h4>✅ Article 1 — Obligation de livraison</h4>
+          <p>En tant que vendeur sur Phone Shop BF, vous vous engagez à <strong>livrer tout produit commandé et payé</strong> dans les délais annoncés. Le non-respect de cette obligation entraîne :</p>
+          <ul>
+            <li>Remboursement intégral de l'acheteur prélevé sur votre compte.</li>
+            <li>Frais de dédommagement de <strong>15% du montant</strong> à votre charge.</li>
+            <li>Suspension ou suppression définitive de votre boutique.</li>
+            <li>Possibilité de <strong>poursuites judiciaires</strong> si le préjudice est avéré.</li>
+          </ul>
+        </div>
+        <div class="trust-article">
+          <h4>📸 Article 2 — Honnêteté des annonces</h4>
+          <p>Les photos et descriptions doivent correspondre exactement aux produits vendus. Tout écart constaté par l'acheteur dans les 72h donne droit à un retour sans frais.</p>
+        </div>
+        <div class="trust-article">
+          <h4>💰 Article 3 — Commission Phone Shop BF</h4>
+          <p>Une commission de <strong>4% du prix de vente</strong> est prélevée automatiquement sur chaque transaction. Cette commission couvre la mise en relation, la sécurisation des paiements et le support client.</p>
+        </div>
+        <div class="trust-article">
+          <h4>🔒 Article 4 — Séquestre des fonds</h4>
+          <p>Les fonds de chaque vente sont conservés par Phone Shop BF pendant <strong>72h après livraison</strong> avant d'être versés au vendeur. Ce délai protège l'acheteur et le vendeur.</p>
+        </div>
+        <div class="trust-article">
+          <h4>📞 Article 5 — Disponibilité</h4>
+          <p>Vous devez être joignable sur WhatsApp dans les <strong>24h suivant une commande</strong>. Phone Shop BF peut retirer un vendeur injoignable de la plateforme.</p>
+        </div>
+      </div>
+      <div class="trust-warning">
+        <p>⚠️ <strong>Avertissement légal :</strong> Tout vendeur percevant un paiement sans livrer la commande est passible de poursuites devant les juridictions commerciales du Burkina Faso. Le remboursement forcé + 15% de frais de dédommagement sera exigé. Phone Shop BF coopèrera avec les autorités judiciaires compétentes.</p>
+      </div>
+      <div class="trust-footer">
+        <p>Charte établie conformément au droit commercial burkinabè. Version 1.0.</p>
+      </div>
+    </div>
+
+    <label class="checkbox-row" id="sc1-row" onclick="toggleChk('sc1','sc1-row')">
+      <input type="checkbox" id="sc1">
+      <p>J'ai lu et j'accepte la <b>Charte des vendeurs Phone Shop BF</b> et ses conditions.</p>
+    </label>
+    <label class="checkbox-row" id="sc2-row" onclick="toggleChk('sc2','sc2-row')">
+      <input type="checkbox" id="sc2">
+      <p>Je m'engage à <b>livrer tout produit commandé et payé</b>. En cas de non-livraison, j'accepte le remboursement de l'acheteur augmenté de <b>15% de frais de dédommagement</b> et les éventuelles poursuites judiciaires.</p>
+    </label>
+    <label class="checkbox-row" id="sc3-row" onclick="toggleChk('sc3','sc3-row')">
+      <input type="checkbox" id="sc3">
+      <p>Je certifie que les informations de ma boutique sont <b>exactes</b> et que mes produits seront conformes aux annonces publiées.</p>
+    </label>
+
+    <div class="btn-row" style="margin-top:6px;">
+      <button class="btn btn-amber" id="submit-seller-btn" onclick="registerSeller()" disabled>✅ Soumettre ma demande d'ouverture</button>
+      <button class="btn btn-ghost" onclick="goTo('sc-register-seller-2')">← Retour</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN 3B — SUCCÈS VENDEUR (EN ATTENTE)
+════════════════════════════════════════ -->
+<div id="sc-success-seller" class="screen">
+  <div class="success-wrap">
+    <div class="pending-top">
+      <div class="pending-icon">⏳</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;color:var(--white);">Demande envoyée !</h2>
+      <p style="font-size:.87rem;color:rgba(255,255,255,.55);margin-top:6px;max-width:260px;margin-left:auto;margin-right:auto;">Votre boutique est en cours d'examen. Vous serez notifié sur WhatsApp sous 24h.</p>
+    </div>
+    <div class="success-body">
+
+      <div class="info-card">
+        <div class="info-card-header">
+          <svg width="14" height="14" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="9" fill="#16A05A"/><rect x="12" y="7" width="12" height="20" rx="2.5" fill="white"/><rect x="14" y="9" width="8" height="12" rx="1.5" fill="#16A05A"/><circle cx="18" cy="24" r="1.5" fill="#16A05A"/></svg>
+          <span>Détails de la demande</span>
+        </div>
+        <div class="info-row"><span class="info-key">Boutique</span><span class="info-val" id="suc-shop-name">—</span></div>
+        <div class="info-row"><span class="info-key">Propriétaire</span><span class="info-val" id="suc-owner">—</span></div>
+        <div class="info-row"><span class="info-key">Ville</span><span class="info-val" id="suc-shop-city">—</span></div>
+        <div class="info-row"><span class="info-key">Statut</span><span class="info-val"><span class="pill pill-amber">⏳ En vérification</span></span></div>
+        <div class="info-row"><span class="info-key">Charte acceptée</span><span class="info-val"><span class="pill pill-green">✓ Oui</span></span></div>
+      </div>
+
+      <div class="next-steps">
+        <h3>📋 Ce qui se passe ensuite</h3>
+        <div class="timeline">
+          <div class="tl-item done">
+            <div class="tl-dot">✓</div>
+            <div class="tl-body"><div class="tl-title">Demande reçue</div><div class="tl-sub">Votre dossier est enregistré chez Phone Shop BF.</div></div>
+          </div>
+          <div class="tl-item current">
+            <div class="tl-dot">⏳</div>
+            <div class="tl-body"><div class="tl-title">Vérification admin</div><div class="tl-sub">Nous vérifions vos informations. Délai : 24h maximum.</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">3</div>
+            <div class="tl-body"><div class="tl-title">Notification WhatsApp</div><div class="tl-sub">Vous recevez une confirmation d'ouverture ou une demande de complément.</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">4</div>
+            <div class="tl-body"><div class="tl-title">Boutique active</div><div class="tl-sub">Vous publiez vos produits et recevez des commandes.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--amber-soft);border-radius:var(--radius);padding:16px;margin-bottom:16px;border:1px solid #FCD34D;">
+        <p style="font-size:.82rem;color:#92400E;line-height:1.7;">💡 <b>Conseil :</b> Pour accélérer la validation, assurez-vous d'être joignable sur le numéro WhatsApp fourni. L'admin pourra vous contacter pour vérifier votre identité.</p>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-green" onclick="contactAdminWA()">💬 Contacter l'admin sur WhatsApp</button>
+        <button class="btn btn-ghost" onclick="goTo('sc-landing')">Retour à l'accueil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ÉCRAN LOGIN
+════════════════════════════════════════ -->
+<div id="sc-login" class="screen">
+  <div class="auth-header">
+    <button class="back-btn" onclick="goTo('sc-landing')">←</button>
+    <div class="auth-header-title">Se connecter</div>
+    <div style="width:40px;"></div>
+  </div>
+  <div class="form-wrap">
+    <div style="text-align:center;margin-bottom:28px;">
+      <svg width="56" height="56" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin:0 auto 12px;">
+        <rect width="36" height="36" rx="9" fill="#16A05A"/>
+        <rect x="11" y="6" width="14" height="22" rx="3" fill="white" opacity="0.15"/>
+        <rect x="12" y="7" width="12" height="20" rx="2.5" fill="white"/>
+        <rect x="14" y="9" width="8" height="12" rx="1.5" fill="#16A05A"/>
+        <circle cx="18" cy="24" r="1.5" fill="#16A05A"/>
+        <rect x="25" y="4" width="7" height="3.5" rx="1" fill="#EF4444"/>
+        <rect x="25" y="7.5" width="7" height="3.5" rx="1" fill="#16A05A"/>
+        <circle cx="28.5" cy="8" r="1.2" fill="#F59E0B"/>
+      </svg>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;">Phone<span style="color:var(--green);">Shop</span> BF</div>
+    </div>
+    <div class="form-section">
+      <div class="field"><label>Téléphone ou Email</label><input type="text" id="l-id" placeholder="+226 70 00 00 00 ou email"></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="l-pwd" placeholder="••••••••"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="doLogin()">Se connecter →</button>
+      <button class="btn btn-ghost" onclick="goTo('sc-landing')">← Retour</button>
+    </div>
+    <div class="login-row" style="margin-top:20px;">
+      Pas encore de compte ? <a onclick="goTo('sc-landing')">Créer un compte</a>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── NAVIGATION ──
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// Si on arrive depuis l'app avec #login, ouvrir directement la page de connexion
+if(window.location.hash==='#login') goTo('sc-login');
+
+function showToast(msg,ms=2500){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+// ── CHECKBOXES ──
+function toggleChk(id,rowId){
+  // handled by label click, just update UI
+  setTimeout(()=>{
+    const cb=document.getElementById(id);
+    const row=document.getElementById(rowId);
+    row.classList.toggle('checked',cb.checked);
+    checkAllBoxes();
+  },10);
+}
+
+function checkAllBoxes(){
+  // Buyer
+  const b1=document.getElementById('chk1');
+  const b2=document.getElementById('chk2');
+  const b3=document.getElementById('chk3');
+  const bBtn=document.getElementById('submit-buyer-btn');
+  if(b1&&b2&&b3&&bBtn) bBtn.disabled=!(b1.checked&&b2.checked&&b3.checked);
+  // Seller
+  const s1=document.getElementById('sc1');
+  const s2=document.getElementById('sc2');
+  const s3=document.getElementById('sc3');
+  const sBtn=document.getElementById('submit-seller-btn');
+  if(s1&&s2&&s3&&sBtn) sBtn.disabled=!(s1.checked&&s2.checked&&s3.checked);
+}
+
+// ── LOGO PREVIEW ──
+function previewLogo(input){
+  const file=input.files[0];
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    document.getElementById('logo-img').src=e.target.result;
+    document.getElementById('logo-preview').style.display='block';
+    document.getElementById('logo-zone').querySelector('p').textContent='Logo ajouté ✅';
+  };
+  r.readAsDataURL(file);
+}
+
+// ── STORAGE PARTAGÉ (même clé que l'app) ──
+const STORE_KEY = 'psbf_db';
+function loadDB(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)||'null'); }catch(e){return null;}
+}
+function saveDB(db){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(db)); }catch(e){}
+}
+function saveSession(session){
+  try{ localStorage.setItem('psbf_session', JSON.stringify(session)); }catch(e){}
+}
+
+// ── INSCRIPTION ACHETEUR ──
+function registerBuyer(){
+  const first=document.getElementById('b-first').value.trim();
+  const last=document.getElementById('b-last').value.trim();
+  const phone=document.getElementById('b-phone').value.trim();
+  const email=document.getElementById('b-email').value.trim();
+  const city=document.getElementById('b-city').value;
+  const pwd=document.getElementById('b-pwd').value;
+  if(!first||!phone||!city||!pwd){
+    showToast('⚠️ Remplissez tous les champs obligatoires.');
+    goTo('sc-register-buyer'); return;
+  }
+  // Charger la DB de l'app et ajouter l'acheteur
+  const db = loadDB() || {};
+  if(!db.buyers) db.buyers=[];
+  // Vérifier si déjà inscrit
+  if(db.buyers.find(b=>b.phone===phone)){
+    showToast('⚠️ Ce numéro est déjà inscrit. Connectez-vous.');
+    return;
+  }
+  const newBuyer = {id:'b'+Date.now(),first,last,phone,email,city,pwd,role:'buyer',date:new Date().toISOString()};
+  db.buyers.push(newBuyer);
+  saveDB(db);
+  // Sauvegarder la session pour que l'app sache qui est connecté
+  saveSession({role:'buyer',id:newBuyer.id,first,last,phone,city});
+  // Remplir l'écran de succès
+  document.getElementById('suc-name').textContent=first+' '+last;
+  document.getElementById('suc-phone').textContent=phone;
+  document.getElementById('suc-city').textContent=city;
+  goTo('sc-success-buyer');
+}
+
+// ── INSCRIPTION VENDEUR ──
+function registerSeller(){
+  const first=document.getElementById('s-first').value.trim();
+  const last=document.getElementById('s-last').value.trim();
+  const phone=document.getElementById('s-phone').value.trim();
+  const email=document.getElementById('s-email').value.trim();
+  const cni=document.getElementById('s-cni').value.trim();
+  const pwd=document.getElementById('s-pwd').value;
+  const shopName=document.getElementById('sh-name').value.trim();
+  const shopCat=document.getElementById('sh-cat').value;
+  const shopCity=document.getElementById('sh-city').value;
+  const shopAddr=document.getElementById('sh-addr').value.trim();
+  const shopDesc=document.getElementById('sh-desc').value.trim();
+  if(!first||!phone||!pwd||!shopName||!shopCity){
+    showToast('⚠️ Remplissez tous les champs obligatoires.'); return;
+  }
+  // Lire le logo si chargé
+  const logoImg=document.getElementById('logo-img');
+  const logo=(logoImg&&logoImg.src&&logoImg.src.startsWith('data:'))?logoImg.src:null;
+  // Ajouter dans la DB partagée
+  const db = loadDB() || {};
+  if(!db.sellers) db.sellers=[];
+  if(db.sellers.find(s=>s.phone===phone)){
+    showToast('⚠️ Ce numéro est déjà inscrit. Connectez-vous.'); return;
+  }
+  const newSeller={id:'s'+Date.now(),first,last,phone,email,cni,pwd,shopName,cat:shopCat,city:shopCity,addr:shopAddr,desc:shopDesc,logo,status:'pending',role:'seller',date:new Date().toISOString()};
+  db.sellers.push(newSeller);
+  saveDB(db);
+  // Remplir l'écran succès
+  document.getElementById('suc-shop-name').textContent=shopName;
+  document.getElementById('suc-owner').textContent=first+' '+last;
+  document.getElementById('suc-shop-city').textContent=shopCity;
+  // Notifier l'admin via WhatsApp
+  const adminNum='22600000000';
+  const msg=encodeURIComponent(`🏪 *Nouvelle demande vendeur Phone Shop BF*\n\nBoutique: ${shopName}\nPropriétaire: ${first} ${last}\nTél: ${phone}\nVille: ${shopCity}\nCatégorie: ${shopCat}\n${cni?'CNI/IFU: '+cni+'\n':''}\nVeuillez vérifier et approuver.`);
+  setTimeout(()=>window.open(`https://wa.me/${adminNum}?text=${msg}`,'_blank'),1200);
+  goTo('sc-success-seller');
+}
+
+// ── LOGIN ──
+function doLogin(){
+  const id=document.getElementById('l-id').value.trim();
+  const pwd=document.getElementById('l-pwd').value;
+  if(!id||!pwd){showToast('⚠️ Entrez vos identifiants.');return;}
+  const db=loadDB()||{};
+  // Chercher dans acheteurs
+  const buyer=(db.buyers||[]).find(b=>(b.phone===id||b.email===id)&&b.pwd===pwd);
+  if(buyer){
+    saveSession({role:'buyer',id:buyer.id,first:buyer.first,last:buyer.last,phone:buyer.phone,city:buyer.city});
+    showToast('✅ Connexion réussie !');
+    setTimeout(()=>window.location.href='phoneshop-bf-app.html',1200); return;
+  }
+  // Chercher dans vendeurs
+  const seller=(db.sellers||[]).find(s=>(s.phone===id||s.email===id)&&s.pwd===pwd);
+  if(seller){
+    if(seller.status==='pending'){showToast('⏳ Votre boutique est en cours de vérification.');return;}
+    saveSession({role:'seller',id:seller.id,first:seller.first,last:seller.last,shopName:seller.shopName,phone:seller.phone,city:seller.city});
+    showToast('✅ Connexion vendeur réussie !');
+    setTimeout(()=>window.location.href='phoneshop-bf-app.html',1200); return;
+  }
+  // Code admin
+  if(id==='admin'&&pwd==='admin2024'){
+    saveSession({role:'admin',first:'Admin',last:'',phone:''});
+    showToast('✅ Accès admin !');
+    setTimeout(()=>window.location.href='phoneshop-bf-app.html',1200); return;
+  }
+  showToast('❌ Identifiants incorrects.');
+}
+
+// ── ACTIONS ──
+function goToApp(){
+  window.location.href='phoneshop-bf-app.html';
+}
+
+function shareOnWA(){
+  const msg=encodeURIComponent('🛒 Je viens de créer mon compte sur *Phone Shop BF* ! Achetez et vendez des téléphones en toute sécurité au Burkina Faso. Rejoignez-nous !');
+  window.open(`https://wa.me/?text=${msg}`,'_blank');
+}
+
+function contactAdminWA(){
+  const shopName=document.getElementById('suc-shop-name').textContent;
+  const msg=encodeURIComponent(`Bonjour Phone Shop BF ! Je viens de soumettre ma demande pour la boutique *${shopName}*. Je suis disponible pour la vérification.`);
+  window.open(`https://wa.me/22600000000?text=${msg}`,'_blank');
+}
+</script>
+</body>
+</html>
